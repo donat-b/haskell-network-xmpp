@@ -21,6 +21,7 @@ module Network.Protocol.XMPP.Handle
 	, hPutBytes
 	, hGetBytes
 	, handleIsSecure
+	, hFlush
 	) where
 
 import           Control.Monad (when)
@@ -73,3 +74,6 @@ hGetBytes (SecureHandle h s) n = liftTLS s $ do
 handleIsSecure :: Handle -> Bool
 handleIsSecure PlainHandle{} = False
 handleIsSecure SecureHandle{} = True
+
+hFlush :: IO.Handle -> ErrorT Text IO ()
+hFlush = liftIO . IO.hFlush
