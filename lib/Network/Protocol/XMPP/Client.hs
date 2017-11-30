@@ -20,6 +20,7 @@ module Network.Protocol.XMPP.Client
 	, bindJID
 	) where
 
+import           Control.Exception (finally)
 import           Control.Monad ((>=>))
 import           Control.Monad.Error (throwError)
 import           Control.Monad.Trans (liftIO)
@@ -52,7 +53,7 @@ runClient server jid username password xmpp = do
 	let handle = H.PlainHandle rawHandle
 
 	-- Open the initial stream and authenticate
-  flip finally (H.hFlush handle) $ M.startXMPP handle "jabber:client" $ do
+	flip finally (IO.hFlush rawHandle) $ M.startXMPP handle "jabber:client" $ do
 		features <- newStream sjid
 		tryTLS sjid features $ \tlsFeatures -> do
 			let mechanisms = authenticationMechanisms tlsFeatures
